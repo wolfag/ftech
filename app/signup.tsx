@@ -1,10 +1,12 @@
-import CountryInput from '@/components/CountryInput';
 import MyButton from '@/components/MyButton';
 import Colors from '@/constants/Colors';
 import { defaultStyles } from '@/constants/Styles';
+import { isEmail } from '@/utils';
+import { isClerkAPIResponseError, useSignUp } from '@clerk/clerk-expo';
 import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -15,12 +17,68 @@ import {
 } from 'react-native';
 
 const SignupPage = () => {
-  const [countryCode, setCountryCode] = useState('+84');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [username, setUsername] = useState('');
+
   const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 0;
   const router = useRouter();
 
-  const onSignup = () => {};
+  const { signUp } = useSignUp();
+
+  const signupByPhone = async () => {
+    try {
+      await signUp?.create({
+        phoneNumber: username,
+      });
+
+      signUp?.preparePhoneNumberVerification();
+
+      router.push({
+        pathname: '/verify/[username]',
+        params: {
+          username,
+        },
+      });
+    } catch (error) {
+      console.error(JSON.stringify(error, null, 2));
+      if (isClerkAPIResponseError(error)) {
+        Alert.alert('Error', error.errors[0].longMessage);
+      }
+    }
+  };
+
+  const signupByEmail = async () => {
+    try {
+      await signUp?.create({
+        emailAddress: username,
+      });
+
+      signUp?.prepareEmailAddressVerification();
+
+      router.push({
+        pathname: '/verify/[username]',
+        params: {
+          username,
+        },
+      });
+    } catch (error) {
+      console.error(JSON.stringify(error, null, 2));
+      if (isClerkAPIResponseError(error)) {
+        Alert.alert('Error', error.errors[0].longMessage);
+      }
+    }
+  };
+
+  const onSignup = () => {
+    if (!username.length) {
+      return;
+    }
+
+    if (isEmail(username)) {
+      signupByEmail();
+    } else {
+      signupByPhone();
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -31,17 +89,16 @@ const SignupPage = () => {
       <View style={defaultStyles.container}>
         <Text style={defaultStyles.header}>Let's get started!</Text>
         <Text style={defaultStyles.descriptionText}>
-          Enter your phone number. We will send you a confirmation code there
+          Enter your credential. We will send you a confirmation code there
         </Text>
+
         <View style={styles.inputContainer}>
-          <CountryInput value={countryCode} onValueChange={setCountryCode} />
           <TextInput
             style={[styles.input, defaultStyles.flex1]}
-            placeholder='Mobile number'
+            placeholder='Email or phone number'
             placeholderTextColor={Colors.gray}
-            keyboardType='numeric'
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
+            value={username}
+            onChangeText={setUsername}
           />
         </View>
 
@@ -60,7 +117,7 @@ const SignupPage = () => {
           onPress={onSignup}
           style={{
             btn: [
-              phoneNumber !== '' ? styles.enabled : styles.disabled,
+              username !== '' ? styles.enabled : styles.disabled,
               { marginBottom: 20 },
             ],
           }}

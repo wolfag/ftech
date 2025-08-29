@@ -5,7 +5,13 @@ import { useFonts } from 'expo-font';
 import { Link, Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { ClerkProvider } from '@clerk/clerk-expo';
+import { tokenCache } from '@clerk/clerk-expo/token-cache';
+
 import 'react-native-reanimated';
+
+const EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY =
+  process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -98,5 +104,12 @@ function InitialLayout() {
 }
 
 export default function RootLayoutNav() {
-  return <InitialLayout />;
+  return (
+    <ClerkProvider
+      tokenCache={tokenCache}
+      publishableKey={EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
+    >
+      <InitialLayout />
+    </ClerkProvider>
+  );
 }
