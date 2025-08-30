@@ -1,7 +1,7 @@
 import Colors from '@/constants/Colors';
 import { defaultStyles } from '@/constants/Styles';
 import { Link, useLocalSearchParams } from 'expo-router';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   Platform,
@@ -12,11 +12,7 @@ import {
   View,
 } from 'react-native';
 
-import {
-  isClerkAPIResponseError,
-  useSignIn,
-  useSignUp,
-} from '@clerk/clerk-expo';
+import { isClerkAPIResponseError, useSignUp } from '@clerk/clerk-expo';
 import {
   CodeField,
   Cursor,
@@ -35,7 +31,6 @@ const OTPPage = () => {
     email: string;
   }>();
 
-  const { signIn } = useSignIn();
   const { signUp, setActive } = useSignUp();
 
   const [code, setCode] = useState('');
@@ -45,7 +40,7 @@ const OTPPage = () => {
     setValue: setCode,
   });
 
-  const verifyCode = async () => {
+  const verifyCode = useCallback(async () => {
     try {
       await signUp?.attemptEmailAddressVerification?.({ code });
 
@@ -60,7 +55,7 @@ const OTPPage = () => {
         Alert.alert('Error', error.errors[0].longMessage);
       }
     }
-  };
+  }, [code, signUp, setActive]);
 
   useEffect(() => {
     if (code.length !== CELL_COUNT) {
@@ -68,7 +63,7 @@ const OTPPage = () => {
     }
 
     verifyCode();
-  }, [code]);
+  }, [code, verifyCode]);
 
   return (
     <View style={defaultStyles.container}>

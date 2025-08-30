@@ -1,10 +1,8 @@
-import { View, Text } from 'react-native';
-import React from 'react';
-import { Tabs } from 'expo-router';
-import { FontAwesome } from '@expo/vector-icons';
 import MainTabHeader from '@/components/MainTabHeader';
 import Colors from '@/constants/Colors';
+import { FontAwesome } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import { Tabs } from 'expo-router';
 
 const Layout = () => {
   return (
