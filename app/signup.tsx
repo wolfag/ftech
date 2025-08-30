@@ -1,41 +1,40 @@
-import MyButton from '@/components/MyButton';
+import SignupForm, { SignupFormData } from '@/components/Signup';
+
 import Colors from '@/constants/Colors';
 import { defaultStyles } from '@/constants/Styles';
-import { isEmail } from '@/utils';
 import { isClerkAPIResponseError, useSignUp } from '@clerk/clerk-expo';
-import { Link, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useRouter } from 'expo-router';
 import {
   Alert,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
 
 const SignupPage = () => {
-  const [username, setUsername] = useState('');
-
   const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 0;
   const router = useRouter();
 
   const { signUp } = useSignUp();
 
-  const signupByPhone = async () => {
+  const onSignup = async (data: SignupFormData) => {
     try {
       await signUp?.create({
-        phoneNumber: username,
+        emailAddress: data.email,
+        // phoneNumber: data.phone,
+        password: data.password,
       });
 
-      signUp?.preparePhoneNumberVerification();
+      signUp?.prepareEmailAddressVerification({
+        strategy: 'email_code',
+      });
 
       router.push({
-        pathname: '/verify/[username]',
+        pathname: '/verify/[email]',
         params: {
-          username,
+          email: data.email,
         },
       });
     } catch (error) {
@@ -43,40 +42,6 @@ const SignupPage = () => {
       if (isClerkAPIResponseError(error)) {
         Alert.alert('Error', error.errors[0].longMessage);
       }
-    }
-  };
-
-  const signupByEmail = async () => {
-    try {
-      await signUp?.create({
-        emailAddress: username,
-      });
-
-      signUp?.prepareEmailAddressVerification();
-
-      router.push({
-        pathname: '/verify/[username]',
-        params: {
-          username,
-        },
-      });
-    } catch (error) {
-      console.error(JSON.stringify(error, null, 2));
-      if (isClerkAPIResponseError(error)) {
-        Alert.alert('Error', error.errors[0].longMessage);
-      }
-    }
-  };
-
-  const onSignup = () => {
-    if (!username.length) {
-      return;
-    }
-
-    if (isEmail(username)) {
-      signupByEmail();
-    } else {
-      signupByPhone();
     }
   };
 
@@ -92,36 +57,7 @@ const SignupPage = () => {
           Enter your credential. We will send you a confirmation code there
         </Text>
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={[styles.input, defaultStyles.flex1]}
-            placeholder='Email or phone number'
-            placeholderTextColor={Colors.gray}
-            value={username}
-            onChangeText={setUsername}
-          />
-        </View>
-
-        <Link href={'/login'} replace asChild>
-          <TouchableOpacity>
-            <Text style={defaultStyles.textLink}>
-              Already have an account? Log in
-            </Text>
-          </TouchableOpacity>
-        </Link>
-
-        <View style={defaultStyles.flex1} />
-
-        <MyButton
-          label='Sign up'
-          onPress={onSignup}
-          style={{
-            btn: [
-              username !== '' ? styles.enabled : styles.disabled,
-              { marginBottom: 20 },
-            ],
-          }}
-        />
+        <SignupForm style={{ flex: 1, marginTop: 20 }} onSubmit={onSignup} />
       </View>
     </KeyboardAvoidingView>
   );

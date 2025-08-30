@@ -1,35 +1,53 @@
-import CountryInput from '@/components/CountryInput';
 import IconButton from '@/components/IconButton';
-import MyButton from '@/components/MyButton';
+import SigninForm, { SigninFormData } from '@/components/Signin';
 import Colors from '@/constants/Colors';
 import { defaultStyles } from '@/constants/Styles';
+import { useSignIn } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
 
 enum SignInType {
-  Phone,
   Email,
   Google,
   Apple,
 }
 
 const LoginPage = () => {
-  const [countryCode, setCountryCode] = useState('+84');
-  const [phoneNumber, setPhoneNumber] = useState('');
   const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 0;
   const router = useRouter();
 
-  const onSignIn = (type: SignInType) => {};
+  const { signIn, setActive } = useSignIn();
+
+  const signInByGoogle = async () => {};
+
+  const signInByApple = async () => {};
+
+  const signInByEmail = async (data: SigninFormData) => {
+    try {
+      await signIn!.create({
+        identifier: data.email,
+        password: data.password,
+      });
+      if (signIn?.status === 'complete') {
+        setActive?.({ session: signIn?.createdSessionId });
+      } else {
+        console.error(JSON.stringify(signIn, null, 2));
+      }
+    } catch (error) {
+      console.error({ error });
+    }
+  };
+
+  const onContinue = (data: SigninFormData) => {
+    signInByEmail(data);
+  };
 
   return (
     <KeyboardAvoidingView
@@ -40,30 +58,10 @@ const LoginPage = () => {
       <View style={defaultStyles.container}>
         <Text style={defaultStyles.header}>Welcome back</Text>
         <Text style={defaultStyles.descriptionText}>
-          Enter the phone number associated with your account
+          {`Enter the email associated with your account`}
         </Text>
-        <View style={styles.inputContainer}>
-          <CountryInput value={countryCode} onValueChange={setCountryCode} />
-          <TextInput
-            style={[styles.input, defaultStyles.flex1]}
-            placeholder='Mobile number'
-            placeholderTextColor={Colors.gray}
-            keyboardType='numeric'
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-          />
-        </View>
 
-        <MyButton
-          label='Continue'
-          style={{
-            btn: [
-              phoneNumber !== '' ? styles.enabled : styles.disabled,
-              { marginBottom: 20 },
-            ],
-          }}
-          onPress={() => onSignIn(SignInType.Phone)}
-        />
+        <SigninForm style={{ marginTop: 20 }} onSubmit={onContinue} />
 
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
           <View style={styles.line} />
@@ -72,19 +70,14 @@ const LoginPage = () => {
         </View>
 
         <IconButton
-          label='Continue with email'
-          Icon={<Ionicons name='mail' size={24} color={'#000'} />}
-          onPress={() => onSignIn(SignInType.Email)}
-        />
-        <IconButton
           label='Continue with Google'
           Icon={<Ionicons name='logo-google' size={24} color={'#000'} />}
-          onPress={() => onSignIn(SignInType.Google)}
+          onPress={signInByGoogle}
         />
         <IconButton
           label='Continue with Apple'
           Icon={<Ionicons name='logo-apple' size={24} color={'#000'} />}
-          onPress={() => onSignIn(SignInType.Apple)}
+          onPress={signInByApple}
         />
       </View>
     </KeyboardAvoidingView>

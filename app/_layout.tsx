@@ -5,7 +5,7 @@ import { useFonts } from 'expo-font';
 import { Link, Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { ClerkProvider } from '@clerk/clerk-expo';
+import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { tokenCache } from '@clerk/clerk-expo/token-cache';
 
 import 'react-native-reanimated';
@@ -32,6 +32,8 @@ function InitialLayout() {
     ...FontAwesome.font,
   });
 
+  const { isSignedIn } = useAuth();
+
   const router = useRouter();
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
@@ -44,6 +46,10 @@ function InitialLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  useEffect(() => {
+    console.log({ isSignedIn });
+  }, [isSignedIn]);
 
   if (!loaded) {
     return null;
@@ -98,6 +104,25 @@ function InitialLayout() {
       <Stack.Screen
         name='help'
         options={{ title: 'Help', presentation: 'modal' }}
+      />
+      <Stack.Screen
+        name='verify/[email]'
+        options={{
+          title: '',
+          headerBackTitle: '',
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: Colors.background,
+          },
+          headerLeft: () => (
+            <Ionicons
+              onPress={router.back}
+              name='arrow-back'
+              size={34}
+              color={Colors.dark}
+            />
+          ),
+        }}
       />
     </Stack>
   );

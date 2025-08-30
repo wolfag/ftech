@@ -12,7 +12,6 @@ import {
   View,
 } from 'react-native';
 
-import { isEmail } from '@/utils';
 import {
   isClerkAPIResponseError,
   useSignIn,
@@ -32,9 +31,8 @@ const autoComplete = Platform.select<TextInputProps['autoComplete']>({
 });
 
 const OTPPage = () => {
-  const { username, signin } = useLocalSearchParams<{
-    username: string;
-    signin?: string;
+  const { email } = useLocalSearchParams<{
+    email: string;
   }>();
 
   const { signIn } = useSignIn();
@@ -49,31 +47,14 @@ const OTPPage = () => {
 
   const verifyCode = async () => {
     try {
-      if (isEmail(username)) {
-        await signUp?.attemptEmailAddressVerification({
-          code,
-        });
+      await signUp?.attemptEmailAddressVerification?.({ code });
+
+      if (signUp?.status === 'complete') {
+        console.log({ session: signUp?.createdSessionId });
+        await setActive?.({ session: signUp?.createdSessionId });
       } else {
-        await signUp?.attemptPhoneNumberVerification({
-          code,
-        });
+        console.error(JSON.stringify(signUp, null, 2));
       }
-
-      await setActive?.({ session: signUp?.createdSessionId });
-    } catch (error) {
-      if (isClerkAPIResponseError(error)) {
-        Alert.alert('Error', error.errors[0].longMessage);
-      }
-    }
-  };
-
-  const verifySignin = async () => {
-    try {
-      await signIn?.attemptFirstFactor({
-        strategy: isEmail(username) ? 'email_code' : 'phone_code',
-        code,
-      });
-      await setActive?.({ session: signIn?.createdSessionId });
     } catch (error) {
       if (isClerkAPIResponseError(error)) {
         Alert.alert('Error', error.errors[0].longMessage);
@@ -85,18 +66,16 @@ const OTPPage = () => {
     if (code.length !== CELL_COUNT) {
       return;
     }
-    if (signin === 'true') {
-      verifySignin();
-    } else {
-      verifyCode();
-    }
+
+    verifyCode();
   }, [code]);
 
   return (
     <View style={defaultStyles.container}>
       <Text style={defaultStyles.header}>6-digit code</Text>
       <Text style={defaultStyles.descriptionText}>
-        Code sent to {username} unless you already have an account
+        Code sent to <Text style={{ fontWeight: 'bold' }}>{email}</Text> unless
+        you already have an account
       </Text>
 
       <CodeField
