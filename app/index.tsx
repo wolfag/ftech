@@ -1,7 +1,8 @@
 import Colors from '@/constants/Colors';
 import { defaultStyles } from '@/constants/Styles';
 import { useAssets } from 'expo-asset';
-import { ResizeMode, Video } from 'expo-av';
+
+import VideoContentView from '@/components/VideoContentView';
 import { Link } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -11,14 +12,7 @@ const HomePage = () => {
   return (
     <View style={styles.container}>
       {assets && (
-        <Video
-          resizeMode={ResizeMode.COVER}
-          isMuted
-          isLooping
-          shouldPlay
-          source={{ uri: assets[0].uri }}
-          style={styles.video}
-        />
+        <VideoContentView videoSource={assets[0].uri} style={styles.video} />
       )}
       <View style={styles.headerText}>
         <Text style={styles.header}>Ready to change the way you money?</Text>
