@@ -2,7 +2,7 @@ import Colors from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
-import { Link, Stack, useRouter } from 'expo-router';
+import { Link, Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
@@ -32,7 +32,8 @@ function InitialLayout() {
     ...FontAwesome.font,
   });
 
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
+  const segments = useSegments();
 
   const router = useRouter();
 
@@ -48,7 +49,17 @@ function InitialLayout() {
   }, [loaded]);
 
   useEffect(() => {
-    console.log({ isSignedIn });
+    if (!isLoaded) {
+      return;
+    }
+
+    const isAuthGroup = segments[0] === '(authenticated)';
+
+    if (isSignedIn && !isAuthGroup) {
+      router.replace('/(authenticated)/(tabs)/home');
+    } else {
+      router.replace('/');
+    }
   }, [isSignedIn]);
 
   if (!loaded) {
@@ -122,6 +133,12 @@ function InitialLayout() {
               color={Colors.dark}
             />
           ),
+        }}
+      />
+      <Stack.Screen
+        name='(authenticated)/(tabs)'
+        options={{
+          headerShown: false,
         }}
       />
     </Stack>
