@@ -41,7 +41,7 @@ const TransactionsSection = ({ style }: Props) => {
 
   return (
     <View style={style}>
-      <Text style={defaultStyles.header}>Transactions</Text>
+      <Text style={defaultStyles.sectionHeader}>Transactions</Text>
 
       <View style={styles.transactions}>
         {transactions.length === 0 && (

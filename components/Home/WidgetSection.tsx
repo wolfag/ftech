@@ -1,11 +1,16 @@
-import { View, Text, StyleSheet } from 'react-native';
-import React from 'react';
 import Colors from '@/constants/Colors';
+import { StyleSheet, Text, View } from 'react-native';
+import WidgetList from './SortableList/WidgetList';
+import { defaultStyles } from '@/constants/Styles';
+import { MARGIN } from './SortableList/Config';
 
 const WidgetSection = () => {
   return (
     <View>
-      <Text>WidgetSection</Text>
+      <Text style={[defaultStyles.sectionHeader, { margin: MARGIN }]}>
+        Widgets
+      </Text>
+      <WidgetList />
     </View>
   );
 };
