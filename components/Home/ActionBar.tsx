@@ -3,6 +3,9 @@ import Ionicons from '@expo/vector-icons/build/Ionicons';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 import CircleButton from '../CircleButton';
 
+import { Feather } from '@expo/vector-icons';
+import Dropdown from '../Dropdown';
+
 type Props = {
   style?: ViewStyle;
 };
@@ -22,6 +25,60 @@ const ActionBar = ({ style }: Props) => {
         label='Details'
         Icon={<Ionicons name='list' size={30} color={Colors.dark} />}
       />
+
+      <Dropdown
+        options={[
+          {
+            key: 'statement',
+            title: 'Statement',
+            icon: {
+              ios: {
+                name: 'list.bullet.rectangle.fill',
+                pointSize: 24,
+              },
+            },
+            onPress: () => {},
+          },
+          {
+            key: 'converter',
+            title: 'Converter',
+            icon: {
+              ios: {
+                name: 'coloncurrencysign.arrow.circlepath',
+                pointSize: 24,
+              },
+            },
+            onPress: () => {},
+          },
+          {
+            key: 'background',
+            title: 'Background',
+            icon: {
+              ios: {
+                name: 'photo.fill',
+                pointSize: 24,
+              },
+            },
+            onPress: () => {},
+          },
+          {
+            key: 'account',
+            title: 'Add new account',
+            icon: {
+              ios: {
+                name: 'plus.rectangle.on.folder.fill',
+                pointSize: 24,
+              },
+            },
+            onPress: () => {},
+          },
+        ]}
+      >
+        <CircleButton
+          label='More'
+          Icon={<Feather name='more-horizontal' size={24} color='black' />}
+        />
+      </Dropdown>
     </View>
   );
 };
