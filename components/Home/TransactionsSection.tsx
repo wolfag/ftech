@@ -1,11 +1,57 @@
-import { View, Text, StyleSheet } from 'react-native';
-import React from 'react';
 import Colors from '@/constants/Colors';
+import { defaultStyles } from '@/constants/Styles';
+import { useBalanceStore } from '@/store/balanceStore';
+import { Transaction } from '@/store/type';
+import { Ionicons } from '@expo/vector-icons';
+import { useCallback } from 'react';
+import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 
-const TransactionsSection = () => {
+type Props = {
+  style?: ViewStyle;
+};
+
+const TransactionsSection = ({ style }: Props) => {
+  const transactions = useBalanceStore().transactions;
+
+  const renderItem = useCallback(({ id, title, amount, date }: Transaction) => {
+    const isIncome = amount > 0;
+
+    return (
+      <View key={id} style={styles.item}>
+        <View
+          style={[
+            styles.circle,
+            { backgroundColor: isIncome ? '#00ca9238' : '#ff6f7029' },
+          ]}
+        >
+          <Ionicons
+            name={isIncome ? 'add' : 'remove'}
+            size={24}
+            color={isIncome ? 'green' : 'red'}
+          />
+        </View>
+        <View style={defaultStyles.flex1}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.date}>{date.toLocaleString()}</Text>
+        </View>
+        <Text>{amount} €</Text>
+      </View>
+    );
+  }, []);
+
   return (
-    <View>
-      <Text>TransactionsSection</Text>
+    <View style={style}>
+      <Text style={defaultStyles.header}>Transactions</Text>
+
+      <View style={styles.transactions}>
+        {transactions.length === 0 && (
+          <Text style={{ padding: 14, color: Colors.gray }}>
+            No transactions
+          </Text>
+        )}
+
+        {transactions.slice(0, 5).map(renderItem)}
+      </View>
     </View>
   );
 };
@@ -13,31 +59,7 @@ const TransactionsSection = () => {
 export default TransactionsSection;
 
 const styles = StyleSheet.create({
-  account: {
-    margin: 80,
-    alignItems: 'center',
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    gap: 10,
-  },
-  balance: {
-    fontSize: 50,
-    fontWeight: 'bold',
-  },
-  currency: {
-    fontSize: 20,
-    fontWeight: '500',
-  },
-  actionRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 20,
-  },
   transactions: {
-    marginHorizontal: 20,
     padding: 14,
     backgroundColor: '#fff',
     borderRadius: 16,
@@ -51,4 +73,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  item: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+  title: { fontWeight: '400' },
+  date: { color: Colors.gray, fontSize: 12 },
 });

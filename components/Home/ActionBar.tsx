@@ -5,17 +5,30 @@ import CircleButton from '../CircleButton';
 
 import { Feather } from '@expo/vector-icons';
 import Dropdown from '../Dropdown';
+import { useBalanceStore } from '@/store/balanceStore';
 
 type Props = {
   style?: ViewStyle;
 };
 
 const ActionBar = ({ style }: Props) => {
+  const runTransaction = useBalanceStore().runTransaction;
+
+  const onAdd = () => {
+    runTransaction({
+      id: Math.random().toString(),
+      title: 'Added money',
+      amount: Math.floor(Math.random() * 1000) * (Math.random() > 0.5 ? 1 : -1),
+      date: new Date(),
+    });
+  };
+
   return (
     <View style={[styles.container, style]}>
       <CircleButton
         label='Add'
         Icon={<Ionicons name='add' size={30} color={Colors.dark} />}
+        onPress={onAdd}
       />
       <CircleButton
         label='Exchange'

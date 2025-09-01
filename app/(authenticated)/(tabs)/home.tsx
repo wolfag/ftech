@@ -11,14 +11,17 @@ const HomePage = () => {
 
   return (
     <ScrollView
-      style={{ backgroundColor: Colors.background }}
-      contentContainerStyle={{ paddingTop: headerHeight }}
+      style={styles.container}
+      contentContainerStyle={{
+        paddingTop: headerHeight,
+      }}
+      scrollEnabled
     >
-      <BalanceInfo style={{ margin: 80 }} />
+      <BalanceInfo style={styles.balanceInfo} />
 
-      <ActionBar style={{ padding: 20 }} />
+      <ActionBar style={styles.actionBar} />
 
-      <TransactionsSection />
+      <TransactionsSection style={styles.transactions} />
 
       <WidgetSection />
     </ScrollView>
@@ -28,42 +31,16 @@ const HomePage = () => {
 export default HomePage;
 
 const styles = StyleSheet.create({
-  account: {
+  container: {
+    backgroundColor: Colors.background,
+  },
+  balanceInfo: {
     margin: 80,
-    alignItems: 'center',
   },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    gap: 10,
-  },
-  balance: {
-    fontSize: 50,
-    fontWeight: 'bold',
-  },
-  currency: {
-    fontSize: 20,
-    fontWeight: '500',
-  },
-  actionRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  actionBar: {
     padding: 20,
   },
   transactions: {
     marginHorizontal: 20,
-    padding: 14,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    gap: 20,
-  },
-  circle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.lightGray,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });

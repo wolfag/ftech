@@ -1,16 +1,18 @@
 import Colors from '@/constants/Colors';
 import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 import MyButton from '../MyButton';
+import { useBalanceStore } from '@/store/balanceStore';
 
 type Props = {
   style?: ViewStyle;
 };
 
 const BalanceInfo = ({ style }: Props) => {
+  const balance = useBalanceStore().balance();
   return (
     <View style={[styles.container, style]}>
       <View style={styles.row}>
-        <Text style={styles.balance}>1420</Text>
+        <Text style={styles.balance}>{balance}</Text>
         <Text style={styles.currency}>€</Text>
       </View>
 
