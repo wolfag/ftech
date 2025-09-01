@@ -1,6 +1,5 @@
 import SignupForm, { SignupFormData } from '@/components/Signup';
 
-import Colors from '@/constants/Colors';
 import { defaultStyles } from '@/constants/Styles';
 import { isClerkAPIResponseError, useSignUp } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
@@ -8,7 +7,6 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  StyleSheet,
   Text,
   View,
 } from 'react-native';
@@ -64,23 +62,3 @@ const SignupPage = () => {
 };
 
 export default SignupPage;
-
-const styles = StyleSheet.create({
-  inputContainer: {
-    marginVertical: 40,
-    flexDirection: 'row',
-  },
-  input: {
-    backgroundColor: Colors.lightGray,
-    padding: 20,
-    borderRadius: 16,
-    fontSize: 20,
-    marginRight: 10,
-  },
-  enabled: {
-    backgroundColor: Colors.primary,
-  },
-  disabled: {
-    backgroundColor: Colors.primaryMuted,
-  },
-});

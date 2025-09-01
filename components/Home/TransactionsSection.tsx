@@ -1,31 +1,16 @@
-import ActionBar from '@/components/Home/ActionBar';
-import BalanceInfo from '@/components/Home/BalanceInfo';
-import TransactionsSection from '@/components/Home/TransactionsSection';
-import WidgetSection from '@/components/Home/WidgetSection';
+import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
 import Colors from '@/constants/Colors';
-import { useHeaderHeight } from '@react-navigation/elements';
-import { ScrollView, StyleSheet } from 'react-native';
 
-const HomePage = () => {
-  const headerHeight = useHeaderHeight();
-
+const TransactionsSection = () => {
   return (
-    <ScrollView
-      style={{ backgroundColor: Colors.background }}
-      contentContainerStyle={{ paddingTop: headerHeight }}
-    >
-      <BalanceInfo style={{ margin: 80 }} />
-
-      <ActionBar style={{ padding: 20 }} />
-
-      <TransactionsSection />
-
-      <WidgetSection />
-    </ScrollView>
+    <View>
+      <Text>TransactionsSection</Text>
+    </View>
   );
 };
 
-export default HomePage;
+export default TransactionsSection;
 
 const styles = StyleSheet.create({
   account: {

@@ -1,5 +1,7 @@
 import { defaultStyles } from '@/constants/Styles';
+import { ReactElement } from 'react';
 import {
+  StyleSheet,
   Text,
   TextProps,
   TouchableOpacity,
@@ -7,22 +9,46 @@ import {
 } from 'react-native';
 
 type Props = Omit<TouchableOpacityProps, 'style'> & {
-  label: string;
+  label?: string;
   style?: {
     btn?: TouchableOpacityProps['style'];
     label?: TextProps['style'];
   };
+  variant?: 'default' | 'small';
+  Icon?: ReactElement;
 };
 
-const MyButton = ({ label, style, ...btnProps }: Props) => {
+const BaseStyle = {
+  default: defaultStyles.pillButton,
+  small: defaultStyles.pillButtonSmall,
+};
+
+const MyButton = ({
+  label,
+  style,
+  variant = 'default',
+  Icon,
+  ...btnProps
+}: Props) => {
   return (
     <TouchableOpacity
       {...btnProps}
-      style={[defaultStyles.pillButton, style?.btn]}
+      style={[styles.container, BaseStyle[variant], style?.btn]}
     >
-      <Text style={[defaultStyles.buttonText, style?.label]}>{label}</Text>
+      {Icon}
+      {!!label && (
+        <Text style={[defaultStyles.buttonText, style?.label]}>{label}</Text>
+      )}
     </TouchableOpacity>
   );
 };
 
 export default MyButton;
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    gap: 10,
+    flexDirection: 'row',
+  },
+});

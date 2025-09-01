@@ -1,3 +1,4 @@
+import Colors from '@/constants/Colors';
 import { defaultStyles } from '@/constants/Styles';
 import { ReactElement } from 'react';
 import {
@@ -6,10 +7,11 @@ import {
   TextProps,
   TouchableOpacity,
   TouchableOpacityProps,
+  View,
 } from 'react-native';
 
 type Props = Omit<TouchableOpacityProps, 'style'> & {
-  label: string;
+  label?: string;
   Icon: ReactElement;
   style?: {
     btn?: TouchableOpacityProps['style'];
@@ -17,27 +19,32 @@ type Props = Omit<TouchableOpacityProps, 'style'> & {
   };
 };
 
-const IconButton = ({ label, Icon, style, ...btnProps }: Props) => {
+const CircleButton = ({ label, Icon, style, ...btnProps }: Props) => {
   return (
     <TouchableOpacity {...btnProps} style={[styles.container, style?.btn]}>
-      {Icon}
+      <View style={styles.circle}>{Icon}</View>
       <Text style={[styles.label, style?.label]}>{label}</Text>
     </TouchableOpacity>
   );
 };
 
-export default IconButton;
+export default CircleButton;
 
 const styles = StyleSheet.create({
   container: {
-    ...defaultStyles.pillButton,
-    flexDirection: 'row',
-    gap: 16,
-    marginTop: 20,
-    backgroundColor: '#fff',
+    alignItems: 'center',
+    gap: 10,
   },
   label: {
     ...defaultStyles.buttonText,
     color: '#000',
+  },
+  circle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: Colors.lightGray,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

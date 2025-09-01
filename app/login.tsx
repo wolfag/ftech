@@ -1,10 +1,10 @@
-import IconButton from '@/components/IconButton';
+import MyButton from '@/components/MyButton';
 import SigninForm, { SigninFormData } from '@/components/Signin';
+import Spacer from '@/components/Spacer';
 import Colors from '@/constants/Colors';
 import { defaultStyles } from '@/constants/Styles';
 import { useSignIn } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -13,15 +13,8 @@ import {
   View,
 } from 'react-native';
 
-enum SignInType {
-  Email,
-  Google,
-  Apple,
-}
-
 const LoginPage = () => {
   const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 0;
-  const router = useRouter();
 
   const { signIn, setActive } = useSignIn();
 
@@ -69,15 +62,32 @@ const LoginPage = () => {
           <View style={styles.line} />
         </View>
 
-        <IconButton
+        <MyButton
           label='Continue with Google'
           Icon={<Ionicons name='logo-google' size={24} color={'#000'} />}
           onPress={signInByGoogle}
+          style={{
+            btn: {
+              backgroundColor: '#fff',
+            },
+            label: {
+              color: '#000',
+            },
+          }}
         />
-        <IconButton
+        <Spacer />
+        <MyButton
           label='Continue with Apple'
           Icon={<Ionicons name='logo-apple' size={24} color={'#000'} />}
           onPress={signInByApple}
+          style={{
+            btn: {
+              backgroundColor: '#fff',
+            },
+            label: {
+              color: '#000',
+            },
+          }}
         />
       </View>
     </KeyboardAvoidingView>
