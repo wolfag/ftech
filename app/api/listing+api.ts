@@ -3,10 +3,10 @@ const CRYPTO_BASE_URL = process.env.CRYPTO_BASE_URL;
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const limit = url.searchParams.get('limit') || 5;
+  const page = url.searchParams.get('page') || 1;
 
   const response = await fetch(
-    `${CRYPTO_BASE_URL}/v1/cryptocurrency/listings/latest?start=1&limit=${limit}&sort=market_cap&cryptocurrency_type=all&tag=all`,
+    `${CRYPTO_BASE_URL}/v1/cryptocurrency/listings/historical?date=2018-09-15&start=${page}&limit=10&sort=cmc_rank&cryptocurrency_type=all`,
     {
       headers: {
         'X-CMC_PRO_API_KEY': CRYPTO_API_KEY,

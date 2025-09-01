@@ -1,16 +1,18 @@
+import { SkeletonList } from '@/components/Crypto/SkeletonList';
 import Colors from '@/constants/Colors';
 import { defaultStyles } from '@/constants/Styles';
 import { CryptoListing } from '@/types/crypto';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useHeaderHeight } from '@react-navigation/elements';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { Link } from 'expo-router';
 import { useCallback } from 'react';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import {
   FlatList,
-  Image,
   ListRenderItem,
+  RefreshControl,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -20,20 +22,27 @@ import { Spacer } from 'react-native-ios-utilities';
 const CryptoPage = () => {
   const headerHeight = useHeaderHeight();
 
-  const currencies = useQuery({
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+    refetch,
+    isRefetching,
+  } = useInfiniteQuery<CryptoListing[]>({
+    initialPageParam: 1,
     queryKey: ['listings'],
-    queryFn: () => fetch('/api/listing').then((res) => res.json()),
+    queryFn: async ({ pageParam = 1 }) => {
+      const res = await fetch(`/api/listing?page=${pageParam}`);
+      return res.json();
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.length === 10 ? allPages.length + 1 : undefined;
+    },
   });
 
-  const ids = currencies.data
-    ?.map((currency: CryptoListing) => currency.id)
-    .join(',');
-
-  const { data } = useQuery({
-    queryKey: ['info', ids],
-    queryFn: () => fetch(`/api/info?ids=${ids}`).then((res) => res.json()),
-    enabled: !!ids,
-  });
+  const flatListData = data?.pages.flat() || [];
 
   const renderItem: ListRenderItem<CryptoListing> = useCallback(
     ({ item: currency }) => {
@@ -49,10 +58,6 @@ const CryptoPage = () => {
               padding: 16,
             }}
           >
-            {/* <Image
-              source={{ uri: data?.[currency.id]?.logo }}
-              style={{ width: 40, height: 40 }}
-            /> */}
             <FontAwesome5 name='bitcoin' size={24} color='black' />
             <View style={{ flex: 1, gap: 6 }}>
               <Text style={{ fontWeight: '600', color: Colors.dark }}>
@@ -95,10 +100,24 @@ const CryptoPage = () => {
     [],
   );
 
+  if (isLoading) {
+    return (
+      <ScrollView
+        contentContainerStyle={{
+          paddingTop: headerHeight,
+          backgroundColor: Colors.background,
+        }}
+        style={{ backgroundColor: Colors.background, margin: 20 }}
+      >
+        <SkeletonList />
+      </ScrollView>
+    );
+  }
+
   return (
     <FlatList
-      data={currencies.data}
-      keyExtractor={(item) => `${item.id}`}
+      data={flatListData}
+      keyExtractor={(item, index) => `${item.id}-${index}`}
       renderItem={renderItem}
       ListHeaderComponent={() => (
         <Text style={defaultStyles.sectionHeader}>Latest Crypto</Text>
@@ -109,9 +128,25 @@ const CryptoPage = () => {
       }}
       style={{ backgroundColor: Colors.background, margin: 20 }}
       ItemSeparatorComponent={() => <Spacer />}
-      ListEmptyComponent={() => (
-        <Text style={defaultStyles.sectionHeader}>No data</Text>
-      )}
+      ListEmptyComponent={() => <Text>No data</Text>}
+      onEndReached={() => {
+        if (hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      }}
+      onEndReachedThreshold={0.3}
+      ListFooterComponent={() => {
+        if (isFetchingNextPage) {
+          return <SkeletonList count={5} />;
+        }
+      }}
+      refreshControl={
+        <RefreshControl
+          colors={['red']}
+          refreshing={isRefetching}
+          onRefresh={refetch}
+        />
+      }
     />
   );
 };
