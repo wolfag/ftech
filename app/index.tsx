@@ -5,9 +5,13 @@ import { useAssets } from 'expo-asset';
 import VideoContentView from '@/components/VideoContentView';
 import { Link } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import MyButton from '@/components/MyButton';
+import { useClerk } from '@clerk/clerk-expo';
 
 const HomePage = () => {
   const [assets] = useAssets([require('@/assets/videos/intro.mp4')]);
+
+  const { signOut } = useClerk();
 
   return (
     <View style={styles.container}>
@@ -17,6 +21,8 @@ const HomePage = () => {
       <View style={styles.headerText}>
         <Text style={styles.header}>Ready to change the way you money?</Text>
       </View>
+
+      <MyButton label='signout' onPress={() => signOut()} />
 
       <View style={styles.buttons}>
         <Link

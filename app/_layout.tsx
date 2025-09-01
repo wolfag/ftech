@@ -1,17 +1,22 @@
 import Colors from '@/constants/Colors';
+import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
+import { tokenCache } from '@clerk/clerk-expo/token-cache';
 import { Ionicons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
 import { Link, Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
-import { tokenCache } from '@clerk/clerk-expo/token-cache';
+
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import 'react-native-reanimated';
+import { TouchableOpacity, View } from 'react-native';
 
 const EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY =
   process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+const queryClient = new QueryClient();
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -141,6 +146,36 @@ function InitialLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name='(authenticated)/crypto/[id]'
+        options={{
+          title: '',
+          headerLeft: () => (
+            <Ionicons
+              name='arrow-back'
+              size={34}
+              color={Colors.dark}
+              onPress={router.back}
+            />
+          ),
+          headerLargeTitle: true,
+          headerTransparent: true,
+          headerRight: () => (
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+              <TouchableOpacity>
+                <Ionicons
+                  name='notifications-outline'
+                  color={Colors.dark}
+                  size={30}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Ionicons name='star-outline' color={Colors.dark} size={30} />
+              </TouchableOpacity>
+            </View>
+          ),
+        }}
+      />
     </Stack>
   );
 }
@@ -151,7 +186,9 @@ export default function RootLayoutNav() {
       tokenCache={tokenCache}
       publishableKey={EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
     >
-      <InitialLayout />
+      <QueryClientProvider client={queryClient}>
+        <InitialLayout />
+      </QueryClientProvider>
     </ClerkProvider>
   );
 }
