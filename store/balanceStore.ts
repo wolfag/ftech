@@ -2,8 +2,8 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { BalanceState, Transaction } from './type';
-// import { zustandStorage } from './mmkkv-storage';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { zustandStorage } from './mmkkv-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const useBalanceStore = create<BalanceState>()(
   persist(
@@ -23,8 +23,8 @@ export const useBalanceStore = create<BalanceState>()(
     }),
     {
       name: 'balance',
-      storage: createJSONStorage(() => AsyncStorage),
-      // storage: createJSONStorage(() => zustandStorage),
+      // storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => zustandStorage),
     },
   ),
 );
