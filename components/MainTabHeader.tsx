@@ -12,7 +12,7 @@ const MainTabHeader = () => {
   return (
     <BlurView intensity={80} tint='extraLight' style={{ paddingTop: top }}>
       <View style={styles.container}>
-        <Link href={'/'} asChild>
+        <Link href={'/(authenticated)/(modals)/account'} asChild>
           <TouchableOpacity
             style={{
               width: 40,
