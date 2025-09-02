@@ -58,7 +58,8 @@
     "victory-native": "^41.19.3",
     "yup": "^1.7.0",
     "zeego": "^3.0.6",
-    "zustand": "^5.0.8"
+    "zustand": "^5.0.8",
+    "expo-local-authentication": "~16.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

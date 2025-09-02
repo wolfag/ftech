@@ -12,6 +12,7 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import 'react-native-reanimated';
 import { TouchableOpacity, View } from 'react-native';
+import UserInactivity from '@/context/UserInactivity';
 
 const EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY =
   process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
@@ -176,6 +177,10 @@ function InitialLayout() {
           ),
         }}
       />
+      <Stack.Screen
+        name='(authenticated)/(modals)/lock'
+        options={{ headerShown: false, animation: 'none' }}
+      />
     </Stack>
   );
 }
@@ -187,7 +192,9 @@ export default function RootLayoutNav() {
       publishableKey={EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
     >
       <QueryClientProvider client={queryClient}>
-        <InitialLayout />
+        <UserInactivity>
+          <InitialLayout />
+        </UserInactivity>
       </QueryClientProvider>
     </ClerkProvider>
   );
