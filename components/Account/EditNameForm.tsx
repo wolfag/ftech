@@ -6,7 +6,7 @@ import InputField from '../Fields/InputField';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-type NameFormData = {
+export type NameFormData = {
   firstName: string;
   lastName: string;
 };

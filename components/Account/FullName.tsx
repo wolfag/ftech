@@ -3,18 +3,19 @@ import { useUser } from '@clerk/clerk-expo';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import EditNameForm from './EditNameForm';
+import EditNameForm, { NameFormData } from './EditNameForm';
 
 const FullName = () => {
   const { user } = useUser();
 
-  const [firstName, setFirstName] = useState(user?.firstName);
-  const [lastName, setLastName] = useState(user?.lastName);
   const [edit, setEdit] = useState(false);
 
-  const onSaveUser = async () => {
+  const onSaveUser = async (data: NameFormData) => {
     try {
-      await user?.update({ firstName: firstName!, lastName: lastName! });
+      await user?.update({
+        firstName: data.firstName,
+        lastName: data.lastName,
+      });
       setEdit(false);
     } catch (error) {
       console.error(error);
@@ -27,9 +28,9 @@ const FullName = () => {
     <View style={styles.container}>
       {!edit && (
         <View style={styles.editRow}>
-          {(!!firstName || !!lastName) && (
+          {(!!user?.firstName || !!user?.lastName) && (
             <Text style={styles.fullNameText}>
-              {firstName} {lastName}
+              {user?.firstName} {user?.lastName}
             </Text>
           )}
 
