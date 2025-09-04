@@ -7,6 +7,7 @@ import { useFonts } from 'expo-font';
 import { Link, Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { DevToolsBubble } from 'react-native-react-query-devtools';
 
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
@@ -212,6 +213,7 @@ export default function RootLayoutNav() {
         <UserInactivity>
           <InitialLayout />
         </UserInactivity>
+        <DevToolsBubble queryClient={queryClient} />
       </QueryClientProvider>
     </ClerkProvider>
   );
